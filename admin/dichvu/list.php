@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $action = $_POST['action'] ?? '';
 
-    // ===== THÊM DỊCH VỤ =====
+    // thêm
     if ($action == 'add') {
         $name = $_POST['name'] ?? '';
         $status = $_POST['status'] ?? 'HoatDong';
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // ===== SỬA DỊCH VỤ =====
+    // sửa
     if ($action == 'edit') {
         $id = $_POST['edit_id'] ?? '';
         $name = $_POST['name'] ?? '';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// ===== XÓA DỊCH VỤ =====
+// xóa
 if (isset($_GET['del-id'])) {
     $id = $_GET['del-id'] ?? '';
     if ($id) {
@@ -48,7 +48,6 @@ if (isset($_GET['del-id'])) {
     }
 }
 
-// Hàm hiển thị badge trạng thái
 function ServiceStatusBadge($status) {
     switch ($status) {
         case 'HoatDong': return '<span class="badge bg-success">Hoạt động</span>';
@@ -57,7 +56,6 @@ function ServiceStatusBadge($status) {
     }
 }
 
-// Hàm format giá tiền
 function FormatPrice($price) {
     return number_format($price, 0, '.', ',') . ' VNĐ';
 }
@@ -160,7 +158,7 @@ function FormatPrice($price) {
             </div>
         </div>
 
-        <!-- Danh sách dịch vụ -->
+        <!-- Danh sách -->
         <div class="container-fluid">
             <div class="row my-2 d-flex-end">
                 <button type="button" class="btn btn-success mx-2" data-toggle="modal" data-target="#modal-add"><i class="fas fa-plus"></i></button>
@@ -227,7 +225,6 @@ function FormatPrice($price) {
                 </div>
             </div>
 
-            <!-- Phân trang -->
             <div class="row my-2 d-flex-between">
                 <div>Hiển thị từ <?=$pager['StartPage']?> đến <?=$pager['EndPage']?> của <?=$pager['TotalItems']?> bản ghi</div>
                 <ul class="pagination">

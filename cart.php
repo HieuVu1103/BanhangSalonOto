@@ -3,15 +3,14 @@
 <?php
 if (!isset($_SESSION)) session_start();
 
-// Kiểm tra người dùng đã đăng nhập và quyền
 if (!isset($_SESSION['TenTaiKhoan']) || $_SESSION['MaQuyen'] != 3) {
-    echo "<script>alert('Bạn cần đăng nhập với quyền khách hàng!'); window.location='sign.php';</script>";
+    echo "<script>alert('Bạn cần đăng nhập với quyền khách hàng!'); window.location='index.php';</script>";
     exit;
 }
 
 $username = $_SESSION['TenTaiKhoan'];
 
-// Thêm sản phẩm vào giỏ hàng
+// thêm sản phẩm vào giỏ hàng
 if ((isset($_GET['id']) || isset($_POST['MaSP']))) {
     $maSP = isset($_GET['id']) ? $_GET['id'] : $_POST['MaSP'];
     $SL = isset($_POST['SL']) ? intval($_POST['SL']) : 1;
@@ -38,7 +37,7 @@ if ((isset($_GET['id']) || isset($_POST['MaSP']))) {
     Database::NonQuery($sql);
 }
 
-// Cập nhật số lượng sản phẩm trong giỏ hàng (Ajax gọi vào chính file này)
+// cập nhật số lượng sản phẩm trong giỏ hàng 
 if (isset($_POST['update_amount'])) {
     $MaSP = $_POST['MaSP'];
     $SL = intval($_POST['SL']);
@@ -51,7 +50,7 @@ if (isset($_POST['update_amount'])) {
             WHERE MaSP = '$MaSP' AND TenTaiKhoan = '$username'";
     Database::NonQuery($sql);
 
-    // Trả về tổng tiền mới để cập nhật giao diện
+    // trả về tổng tiền mới để cập nhật giao diện
     $sql = "SELECT g.MaSP, IFNULL(s.GiaKhuyenMai, s.Gia) AS Gia, g.SL
             FROM GioHang g
             INNER JOIN SanPham s ON g.MaSP = s.MaSP
@@ -69,14 +68,14 @@ if (isset($_POST['update_amount'])) {
     exit;
 }
 
-// Xóa sản phẩm khỏi giỏ hàng
+// xóa sản phẩm khỏi giỏ hàng
 if (isset($_GET['del-cart-id'])) {
     $MaSP = $_GET['del-cart-id'];
     $sql = "DELETE FROM GioHang WHERE MaSP = '$MaSP' AND TenTaiKhoan = '$username'";
     Database::NonQuery($sql);
 }
 
-// Lấy danh sách sản phẩm trong giỏ hàng
+// lấy danh sách sản phẩm trong giỏ hàng
 $sql = "SELECT g.MaSP, s.TenSP, s.HinhAnh, 
             IFNULL(s.GiaKhuyenMai, s.Gia) AS Gia,  
             s.SL AS SLSanPham, g.SL
@@ -86,7 +85,7 @@ $sql = "SELECT g.MaSP, s.TenSP, s.HinhAnh,
         ORDER BY g.UpdatedAt DESC";
 $carts = Database::GetData($sql);
 
-// Tính tổng tiền
+// tính tổng tiền
 $totalMoney = 0;
 if ($carts) {
     foreach ($carts as $cart) {

@@ -20,7 +20,6 @@
         </div>
     </div>
 
-    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -45,7 +44,6 @@
                 $totalServices = Database::GetData("SELECT COUNT(*) AS total FROM dichvu", ['row'=>0])['total'];
                 ?>
 
-                <!-- Card Đơn hàng -->
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
@@ -61,7 +59,6 @@
                     </div>
                 </div>
 
-                <!-- Card Sản phẩm -->
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-success">
                         <div class="inner">
@@ -77,7 +74,7 @@
                     </div>
                 </div>
 
-                <!-- Card Loại sản phẩm -->
+
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-secondary">
                         <div class="inner">
@@ -93,7 +90,6 @@
                     </div>
                 </div>
 
-                <!-- Card Người dùng -->
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
@@ -109,7 +105,7 @@
                     </div>
                 </div>
 
-                <!-- Card Lịch đặt dịch vụ -->
+
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-primary">
                         <div class="inner">
@@ -125,7 +121,7 @@
                     </div>
                 </div>
 
-                <!-- Card Dịch vụ -->
+
                 <div class="col-lg-4 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
@@ -144,7 +140,7 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
+
 </div>
 
 <?php include '../footer.php'?>

@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['TenTaiKhoan'])) {
     echo "<script>alert('Bạn cần đăng nhập trước khi đặt lịch!'); window.location='sign.php';</script>";
     exit;
@@ -14,10 +13,11 @@ if (!isset($_SESSION['TenTaiKhoan'])) {
 
 $username = $_SESSION['TenTaiKhoan'];
 
-// Lấy thông tin người dùng
+// lấy thông tin người dùng
 $userInfo = Database::GetData("SELECT TenDayDu, SDT FROM users WHERE TenTaiKhoan='$username'", ['row'=>0]);
 $TenDayDu = $userInfo['TenDayDu'] ?? '';
 $SDT      = $userInfo['SDT'] ?? '';
+
 
 // Lấy danh sách dịch vụ hoạt động
 $services = Database::GetData("SELECT MaDichVu, TenDichVu, Gia FROM dichvu WHERE TrangThai='HoatDong'");
@@ -125,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div class="form-group">
                     <label>Model xe:</label>
-                    <input type="text" name="ModelXe" class="form-control" placeholder="VD: Toyota Vios" required>
+                    <input type="text" name="ModelXe" class="form-control" placeholder="VD: Toyota Vios 2019" required>
                 </div>
 
                 <div class="form-group">
@@ -151,13 +151,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
 
                 <button type="submit" class="btn-brand">Đặt lịch ngay</button>
+                
             </form>
         </div>
     </div>
 </div>
 
 <script>
-// Validate ngày hẹn trước khi submit
+// xác thực
 document.querySelector('form.booking-form').addEventListener('submit', function(e) {
     const input = document.querySelector('input[name="NgayHen"]');
     const selected = new Date(input.value);

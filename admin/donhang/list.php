@@ -1,9 +1,8 @@
 <?php include '../header.php'?>
 <?php
 
-// ==========================
-// XỬ LÝ HỦY ĐƠN HÀNG (CHỈ KHI CHỜ XỬ LÝ)
-// ==========================
+
+// xử lý hủy
 if (isset($_GET['cancel']) && isset($_GET['MaDonDatHang'])) {
     $MaDonDatHang = $_GET['MaDonDatHang'];
     
@@ -21,9 +20,8 @@ if (isset($_GET['cancel']) && isset($_GET['MaDonDatHang'])) {
     }
 }
 
-// ==========================
-// XỬ LÝ CHUYỂN ĐƠN HÀNG SANG ĐANG GIAO HÀNG
-// ==========================
+
+// xử lý giao hàng
 if (isset($_GET['ship']) && isset($_GET['MaDonDatHang'])) {
     $MaDonDatHang = $_GET['MaDonDatHang'];
 
@@ -41,35 +39,28 @@ if (isset($_GET['ship']) && isset($_GET['MaDonDatHang'])) {
     }
 }
 
-// ==========================
-// XỬ LÝ HOÀN THÀNH ĐƠN HÀNG + TẠO HÓA ĐƠN
-// ==========================
+// xử lý hoàn thành và tạo hóa đơn
 if (isset($_GET['complete']) && isset($_GET['MaDonDatHang'])) {
     $MaDonDatHang = $_GET['MaDonDatHang'];
 
     $connect = Database::BeginTransaction();
     try {
-        // Kiểm tra trạng thái hiện tại
         $order = Database::GetData("SELECT * FROM dondathang WHERE MaDonDatHang='$MaDonDatHang'", ['row'=>0]);
         if (!$order || $order['TrangThai'] != 'DangGiaoHang') {
             throw new Exception('Chỉ có thể hoàn thành đơn hàng đang giao hàng');
         }
 
-        // Cập nhật trạng thái đơn hàng
         Database::NonQueryTrans($connect, "UPDATE dondathang SET TrangThai='DaHoanThanh' WHERE MaDonDatHang='$MaDonDatHang'");
-        
-        // Kiểm tra xem đã có hóa đơn chưa
+
         $checkHD = Database::GetData("SELECT MaHoaDon FROM hoadon WHERE MaDonDatHang='$MaDonDatHang'", ['row'=>0]);
 
         if (!$checkHD) {
             $TongTien = $order['TongTien'];
             $GhiChu = $order['GhiChu'] ?? null;
 
-            // Tạo hóa đơn
             $sqlHD = "INSERT INTO hoadon (MaDonDatHang, TongTien, GhiChu) VALUES ('$MaDonDatHang', '$TongTien', " . ($GhiChu ? "'$GhiChu'" : "NULL") . ")";
             $MaHoaDon = Database::NonQueryIdTrans($connect, $sqlHD);
 
-            // Lấy chi tiết đơn hàng để tạo chi tiết hóa đơn
             $chiTiet = Database::GetData("
                 SELECT ctdh.*, sp.TenSP, sp.Gia
                 FROM chitietdondathang ctdh
@@ -81,7 +72,7 @@ if (isset($_GET['complete']) && isset($_GET['MaDonDatHang'])) {
                 $MaSP = $item['MaSP'];
                 $TenSP = addslashes($item['TenSP']);
                 $SL = $item['SL'];
-                $Gia = $item['DonGia']; // Sử dụng DonGia từ chitietdondathang
+                $Gia = $item['DonGia']; 
                 $NgayBatDauBH = $item['NgayBatDauBH'] ? "'" . $item['NgayBatDauBH'] . "'" : "NULL";
                 $NgayKetThucBH = $item['NgayKetThucBH'] ? "'" . $item['NgayKetThucBH'] . "'" : "NULL";
 
@@ -102,40 +93,33 @@ if (isset($_GET['complete']) && isset($_GET['MaDonDatHang'])) {
     }
 }
 
-// ==========================
-// XỬ LÝ HOÀN HÀNG + HOÀN TRẢ SỐ LƯỢNG VÀO KHO
-// ==========================
+
+// xử lý hoàn
 if (isset($_GET['return']) && isset($_GET['MaDonDatHang'])) {
     $MaDonDatHang = $_GET['MaDonDatHang'];
     
     $connect = Database::BeginTransaction();
     try {
-        // Kiểm tra trạng thái hiện tại
         $order = Database::GetData("SELECT TrangThai FROM dondathang WHERE MaDonDatHang='$MaDonDatHang'", ['row'=>0]);
         if (!$order || $order['TrangThai'] != 'DaHoanThanh') {
             throw new Exception('Chỉ có thể hoàn hàng khi đơn hàng đã hoàn thành');
         }
 
-        // Cập nhật trạng thái đơn hàng
         Database::NonQueryTrans($connect, "UPDATE dondathang SET TrangThai='HoanHang' WHERE MaDonDatHang='$MaDonDatHang'");
         
-        // Lấy thông tin phiếu xuất để hoàn trả số lượng
         $phieuXuat = Database::GetData("SELECT MaXuat FROM phieuxuat WHERE MaDonDatHang='$MaDonDatHang' AND TrangThai='DaXuat'", ['row'=>0]);
         
         if ($phieuXuat) {
             $MaXuat = $phieuXuat['MaXuat'];
             
-            // Lấy chi tiết phiếu xuất để hoàn trả số lượng
             $chiTiet = Database::GetData("SELECT MaSP, SL FROM chitietphieuxuat WHERE MaXuat='$MaXuat'");
             
             foreach ($chiTiet as $item) {
                 $MaSP = $item['MaSP'];
                 $SL = $item['SL'];
-                // Hoàn trả số lượng vào kho
                 Database::NonQueryTrans($connect, "UPDATE sanpham SET SL = SL + $SL WHERE MaSP = $MaSP");
             }
             
-            // Cập nhật trạng thái phiếu xuất thành Huy
             Database::NonQueryTrans($connect, "UPDATE phieuxuat SET TrangThai='Huy' WHERE MaXuat='$MaXuat'");
         }
 
@@ -148,20 +132,16 @@ if (isset($_GET['return']) && isset($_GET['MaDonDatHang'])) {
     }
 }
 
-// ==========================
-// TẠO PHIẾU XUẤT CHO ĐƠN HÀNG ĐÃ XÁC NHẬN
-// ==========================
+// tạo phiếu xuất
 function CreatePhieuXuatForConfirmedOrder($MaDonDatHang) {
     $connect = Database::BeginTransaction();
     try {
-        // Kiểm tra xem đã có phiếu xuất chưa
         $existingPX = Database::GetData("SELECT MaXuat FROM phieuxuat WHERE MaDonDatHang='$MaDonDatHang'", ['row'=>0]);
         if ($existingPX) {
             Database::Rollback($connect);
             return ['success' => true, 'message' => 'Phiếu xuất đã tồn tại'];
         }
 
-        // Lấy chi tiết đơn hàng để tạo phiếu xuất
         $chiTiet = Database::GetData("
             SELECT ctdh.*, sp.TenSP, sp.Gia
             FROM chitietdondathang ctdh
@@ -173,7 +153,6 @@ function CreatePhieuXuatForConfirmedOrder($MaDonDatHang) {
             throw new Exception('Không tìm thấy chi tiết đơn hàng');
         }
 
-        // Kiểm tra tồn kho trước khi tạo phiếu xuất
         foreach ($chiTiet as $item) {
             $currentStock = Database::GetData("SELECT SL FROM sanpham WHERE MaSP = " . $item['MaSP'], ['row'=>0]);
             if (!$currentStock || $currentStock['SL'] < $item['SL']) {
@@ -191,19 +170,16 @@ function CreatePhieuXuatForConfirmedOrder($MaDonDatHang) {
                   VALUES ('$MaDonDatHang', NULL, 'BanHang', 'DaXuat', '$TongTienXuat')";
         $MaXuat = Database::NonQueryIdTrans($connect, $sqlPX);
 
-        // Thêm chi tiết phiếu xuất và trừ SL sản phẩm
         foreach ($chiTiet as $item) {
             $MaSP = $item['MaSP'];
             $SL = $item['SL'];
             $GiaXuat = $item['DonGia'];
 
-            // Thêm chi tiết phiếu xuất
             Database::NonQueryTrans($connect, "
                 INSERT INTO chitietphieuxuat (MaXuat, MaSP, SL, GiaXuat)
                 VALUES ('$MaXuat', '$MaSP', '$SL', '$GiaXuat')
             ");
 
-            // Trừ SL sản phẩm
             Database::NonQueryTrans($connect, "
                 UPDATE sanpham SET SL = SL - $SL WHERE MaSP = $MaSP
             ");
@@ -218,11 +194,9 @@ function CreatePhieuXuatForConfirmedOrder($MaDonDatHang) {
     }
 }
 
-// ==========================
-// TỰ ĐỘNG TẠO PHIẾU XUẤT CHO CÁC ĐƠN HÀNG XÁC NHẬN CHƯA CÓ PHIẾU XUẤT
-// ==========================
+
+// tự động
 function AutoCreatePhieuXuatForConfirmedOrders() {
-    // Lấy các đơn hàng đã xác nhận nhưng chưa có phiếu xuất
     $ordersNeedPX = Database::GetData("
         SELECT d.MaDonDatHang 
         FROM dondathang d
@@ -240,9 +214,7 @@ function AutoCreatePhieuXuatForConfirmedOrders() {
     }
 }
 
-// ==========================
-// HÀM HIỂN THỊ BADGE TRẠNG THÁI
-// ==========================
+
 function OrderStatusBadge($status) {
     switch ($status) {
         case 'ChoXuLy': return '<span class="badge bg-warning">Chờ xử lý</span>';
@@ -255,7 +227,6 @@ function OrderStatusBadge($status) {
     }
 }
 
-// Gọi hàm tự động tạo phiếu xuất (sau khi đã định nghĩa tất cả functions)
 AutoCreatePhieuXuatForConfirmedOrders();
 
 ?>
@@ -397,7 +368,6 @@ AutoCreatePhieuXuatForConfirmedOrders();
                     </div>
                 </div>
             </div>
-                <!-- PHÂN TRANG -->
                 <div class="row my-2 d-flex-between">
                     <div>Hiển thị từ <?=$pager['StartPage']?> đến <?=$pager['EndPage']?> của <?=$pager['TotalItems']?> bản ghi</div>
                     <ul class="pagination">

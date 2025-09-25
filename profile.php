@@ -92,7 +92,6 @@ $alert = "";
 $alert1 = "";
 
 if (isset($_POST['submit'])) {
-    // Cập nhật avatar nếu có file mới
     if (!empty($_FILES['avatar']['name'])) {
         $extension = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
         $image_name = $_SESSION['TenTaiKhoan'] . "." . $extension;
@@ -135,7 +134,7 @@ if (isset($_POST['submit'])) {
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                    </div>';
 
-        // ✅ Refresh lại dữ liệu user
+        // Refresh lại dữ liệu user
         $user = Database::GetData("SELECT * FROM users WHERE TenTaiKhoan = '" . $_SESSION['TenTaiKhoan'] . "'", ['row' => 0]);
     } else {
         $alert .= '<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -220,12 +219,12 @@ function ServiceStatusBadge($status) {
 <body class="profile__bg d-flex-center">
 <div class="profile__container">
 
-    <!-- Cột 1: Avatar -->
+    <!-- Avatar -->
     <div class="profile__avatar-col">
         <img class="profile__avatar" src="<?=$user['Avatar']?>?v=<?=time()?>" alt="Avatar">
     </div>
 
-    <!-- Cột 2: Thông tin cá nhân 123 -->
+    <!--Thông tin cá nhân -->
     <div class="profile__form">
         <div class="profile__form--header"><h3>Thông tin cá nhân</h3></div>
         <form class="profile__form--body" method="POST" enctype="multipart/form-data">
@@ -251,7 +250,7 @@ function ServiceStatusBadge($status) {
         </form>
     </div>
 
-    <!-- Cột 3: Lịch sử -->
+    <!-- Lịch sử -->
     <div class="profile__history">
 
         <!-- Lịch sử đơn hàng -->
@@ -277,13 +276,13 @@ function ServiceStatusBadge($status) {
                     <td><?=OrderStatusBadge($order['TrangThai'])?></td>
                     <td><?=date('d-m-Y H:i', strtotime($order['CreatedAt']))?></td>
                     <td>
-                        <!-- Nút xem chi tiết luôn hiển thị -->
+                        <!-- nút xem chi tiết luôn hiển thị -->
                         <button class="btn btn-info btn-sm" title="Xem chi tiết"
                             onclick="showOrderDetail('<?=$order['MaDonDatHang']?>')">
                             <i class="fas fa-eye"></i>
                         </button>
 
-                        <!-- Nút thanh toán - chỉ hiển thị khi: chưa thanh toán, chưa hủy, còn trong 15 phút -->
+                        <!-- nút thanh toán - chỉ hiển thị khi: chưa thanh toán, chưa hủy, còn trong 15 phút -->
                         <?php if (!$order['DaThanhToan'] && $order['TrangThai'] != 'Huy' && $order['ConThoiGianThanhToan']): ?>
                             <a href="pay.php?MaDonDatHang=<?=$order['MaDonDatHang']?>" 
                             class="btn btn-warning btn-sm" title="Thanh toán">
@@ -291,7 +290,7 @@ function ServiceStatusBadge($status) {
                             </a>
                         <?php endif; ?>
 
-                        <!-- Nút in chỉ hiển thị khi đơn đã hoàn thành -->
+                        <!-- nút in chỉ hiển thị khi đơn đã hoàn thành -->
                         <?php if ($order['TrangThai'] == 'DaHoanThanh'): ?>
                             <a href="print-order.php?order-id=<?=$order['MaDonDatHang']?>" 
                             class="btn btn-success btn-sm" title="In đơn">
@@ -299,7 +298,7 @@ function ServiceStatusBadge($status) {
                             </a>
                         <?php endif; ?>
 
-                        <!-- Nút hủy chỉ hiển thị khi đang chờ xử lý -->
+                        <!-- nút hủy chỉ hiển thị khi đang chờ xử lý -->
                         <?php if ($order['TrangThai'] == 'ChoXuLy'): ?>
                             <a href="?cancelOrder=<?=$order['MaDonDatHang']?>" 
                             class="btn btn-danger btn-sm" 
@@ -430,9 +429,9 @@ function showOrderDetail(orderId) {
     html += `<table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Mã dịch vụ</th>
-                        <th>Xe</th>
-                        <th>Biển số</th>
+                        <th>Mã sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá tiền</th>
                         <th>Mã giảm giá</th>
                         <th>Giảm</th>
                     </tr>
@@ -494,4 +493,3 @@ function showServiceDetail(serviceId) {
 
 </body>
 </html>
-<!-- 123 -->

@@ -35,6 +35,8 @@
                         'type' => 'success',
                         'text' => 'Cập nhật thành công',
                     ];
+                    header("Location: list.php");
+                    exit;
                 }
             } else {
                 $message = [
@@ -137,7 +139,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Huỷ</button>
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='list.php'">Hủy</button>
                         <button name="action" value="edit" class="btn btn-success">Sửa</button>
                     </div>
                 </form>

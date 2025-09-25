@@ -2,9 +2,8 @@
 include '../header.php';
 include '../sidebar.php';
 
-// =====================
+
 // Xử lý thêm phiếu kiểm
-// =====================
 if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_phieu'])) {
     $nguoiKiem = $_POST['NguoiKiem'] ?? '';
     $ghiChuPhieu = $_POST['GhiChuPhieu'] ?? '';
@@ -30,9 +29,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_phieu'])) {
     echo "<div class='alert alert-success'>Thêm phiếu kiểm thành công!</div>";
 }
 
-// =====================
 // Xử lý AJAX xem chi tiết phiếu kiểm trong cùng file
-// =====================
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['MaKiem'])) {
     $maKiem = (int)$_POST['MaKiem'];
     $chiTiet = Database::GetData("
@@ -69,17 +66,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['MaKiem'])) {
     else:
         echo '<div class="text-warning">Không có chi tiết!</div>';
     endif;
-    exit; // Kết thúc trả HTML cho AJAX
+    exit; 
 }
 
-// =====================
 // Lấy danh sách sản phẩm và phiếu kiểm
-// =====================
 $products = Database::GetData("SELECT * FROM SanPham ORDER BY TenSP ASC");
 $phieuKiems = Database::GetData("SELECT * FROM PhieuKiem ORDER BY TGKiem DESC");
 ?>
 
-<!-- Bootstrap 5 CSS (nếu chưa load trong header.php) -->
+<!-- Bootstrap 5 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="content-wrapper">
@@ -190,7 +185,7 @@ $phieuKiems = Database::GetData("SELECT * FROM PhieuKiem ORDER BY TGKiem DESC");
   </section>
 </div>
 
-<!-- Bootstrap 5 JS (nếu chưa load trong footer.php) -->
+<!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>

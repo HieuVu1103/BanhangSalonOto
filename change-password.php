@@ -14,7 +14,7 @@
 
 <?php
     if (!isset($_SESSION['TenTaiKhoan'])) {
-        header('Location: /Salonoto/sign.php'); // Chưa đăng nhập
+        header('Location: /Salonoto/sign.php');
         exit;
     }
 
@@ -28,17 +28,16 @@
     } elseif (empty($pass_1)) {
         $message = '<p style="color: #ED5565;">Mật khẩu mới không được để trống</p>';
     } else {
-        // Lấy thông tin user từ database
+        // lấy thông tin user từ database
         $sql = "SELECT MatKhau FROM Users WHERE TenTaiKhoan = '" . $_SESSION['TenTaiKhoan'] . "' AND TrangThai = 1";
         $users = Database::GetData($sql, ['row'=>0]);
 
         if ($users && password_verify($re_pass, $users['MatKhau'])) {
-            // Mã hóa mật khẩu mới
+            // mã hóa mật khẩu mới
             $hashedPassword = password_hash($pass_1, PASSWORD_DEFAULT);
             $updateSql = "UPDATE Users SET MatKhau = '$hashedPassword' WHERE TenTaiKhoan = '" . $_SESSION['TenTaiKhoan'] . "'";
             if (Database::NonQuery($updateSql)) {
                 $message = '<p style="color: #48CFAD;">Đổi mật khẩu thành công. Vui lòng đăng nhập lại</p>';
-                // Logout sau khi đổi mật khẩu
                 session_destroy();
                 header('Refresh:2; URL=/Salonoto/sign.php');
             } else {

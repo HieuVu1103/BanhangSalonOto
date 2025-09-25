@@ -92,6 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (Database::NonQuery($sql)) {
                 $message = ['type'=>'success','text'=>'Cập nhật sản phẩm thành công'];
+                header("Location: list.php");
+                    exit;
             }
         } else {
             $message = ['type'=>'warning','text'=>'Tên sản phẩm không được để trống'];
@@ -330,9 +332,8 @@ if (isset($_GET['del-id'])) {
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-danger" onclick="window.location.href='list.php'">Hủy</button>
                 <button name="action" value="edit" class="btn btn-success">Sửa</button>
-                <!-- Nút Xóa giá khuyến mãi -->
                 <button name="action" value="remove-promo" class="btn btn-warning">Xóa KM</button>
             </div>
         </form>
@@ -366,7 +367,7 @@ if (isset($_GET['del-id'])) {
                                                 <th>Mô tả</th>
                                                 <th>Tính năng</th>
                                                 <th>Giá</th>
-                                                <th>Khuyến mãi</th>
+                                                <th>Giá khuyến mãi</th>
                                                 <th>Loại</th>
                                                 <th>Bảo hành (năm)</th>
                                                 <th width="200">Công cụ</th>

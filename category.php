@@ -34,13 +34,24 @@
                         <img src="<?= $sanPham['HinhAnh'] ?>" alt="<?= $sanPham['TenSP'] ?>" style="height: 320px; width: 100%; object-fit: cover;">
                     </div>
                     <h2><a href="<?= '/Salonoto/details.php?id=' . $sanPham['MaSP'] ?>"><?= $sanPham['TenSP'] ?></a></h2>
-                    <div class="product-carousel-price">
-                        <ins><?= number_format($sanPham['Gia']) ?> ₫</ins>
+                   <div class="product-carousel-price">
+                        <?php if (!empty($sanPham['GiaKhuyenMai']) && $sanPham['GiaKhuyenMai'] > 0): ?>
+                            <ins><?= number_format($sanPham['GiaKhuyenMai']) ?> ₫</ins>
+                            <?php if (!empty($sanPham['Gia']) && $sanPham['Gia'] > 0): ?>
+                                <del><?= number_format($sanPham['Gia']) ?> ₫</del>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php if (!empty($sanPham['Gia']) && $sanPham['Gia'] > 0): ?>
+                                <ins><?= number_format($sanPham['Gia']) ?> ₫</ins>
+                            <?php else: ?>
+                                <ins>Liên hệ</ins>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="product-option-shop">
                         <?php if (isset($_SESSION['Role']) && $_SESSION['Role'] == 3) { ?>
-                        <a class="add_to_cart_button" href="<?= '/Salonoto/GioHang.php?id=' . $sanPham['MaSP'] ?>">
+                        <a class="add_to_cart_button" href="<?= '/Salonoto/cart.php?id=' . $sanPham['MaSP'] ?>">
                             <i class="fas fa-cart-plus"></i>
                         </a>
                         <?php } ?>

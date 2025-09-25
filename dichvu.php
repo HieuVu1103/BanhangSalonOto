@@ -37,10 +37,8 @@ figcaption {
 
 <div class="container service-container">
 
-    <!-- Tiêu đề dịch vụ -->
     <h2 style="text-align: center;">DỊCH VỤ TẠI SALON THẾ GIỚI Ô TÔ</h2>
 
-    <!-- Banner + Giới thiệu -->
     <div class="service-banner">
         <img src="/Salonoto/assets/img/dv.jpg" alt="Salon Thế Giới Ô Tô" style="margin: 0 auto; display: block;">
         <p>
@@ -48,7 +46,6 @@ figcaption {
             Với <strong>đội ngũ kỹ thuật viên giàu kinh nghiệm</strong> và cơ sở vật chất hiện đại, chúng tôi cam kết mang đến cho xe của bạn <strong>hiệu suất tối ưu, an toàn tuyệt đối và vẻ đẹp hoàn hảo.</strong>
         </p>
 
-        <!-- Hình nhỏ 2 cột -->
         <div class="service-intro-images">
             <img src="/Salonoto/assets/img/sc1.jpg" alt="Salon Thế Giới Ô Tô 1" style="margin: 0 auto; display: block;">
             <p>
@@ -68,7 +65,7 @@ figcaption {
     </div>
     <h2 style="text-align: center;">Sau đây là những dịch vụ nổi bật tại Thế Giới Ô Tô</h2>
 <?php
-// Lấy dữ liệu dịch vụ từ DB dùng phương thức tĩnh
+
 $services = Database::GetData("SELECT * FROM dichvu WHERE TrangThai='HoatDong'");
 
 if (!empty($services)) {
@@ -85,7 +82,6 @@ if (!empty($services)) {
 }
 ?>
 
-<!-- Bản đồ -->
 <div class="row" style="margin-top: 40px;">
     
     <p style="font-size: 20px;">

@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     WHERE MaGiamGia = '$id'";
             if (Database::NonQuery($sql)) {
                 $message = ['type' => 'success', 'text' => 'Cập nhật thành công'];
+                header("Location: list.php");
+                    exit;
             }
         } else {
             $message = ['type' => 'warning'];
@@ -143,7 +145,7 @@ if (isset($_GET['del-id'])) {
                         <div class="form-group"><label>Số lần sử dụng</label><input type="number" name="limit" value="<?=$km['SoLanSuDung']?>" class="form-control"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Huỷ</button>
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='list.php'">Hủy</button>
                         <button name="action" value="edit" class="btn btn-success">Sửa</button>
                     </div>
                 </form>

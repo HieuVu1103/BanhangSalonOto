@@ -3,12 +3,22 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $image_path = '';
-    if (isset($_FILES['pic'])) {
-        $image_path = '/uploads/' . $_FILES['pic']['name'];
-        move_uploaded_file($_FILES['pic']['tmp_name'], '../../' . $image_path);
+    if (isset($_FILES['pic']) && !empty($_FILES['pic']['name'])) {
+        $filename   = basename($_FILES['pic']['name']);
+        $image_path = '/Salonoto/assets/img/sliders/' . $filename;
+        $full_path  = $_SERVER['DOCUMENT_ROOT'] . $image_path;
+
+        $dir = dirname($full_path);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        if (!move_uploaded_file($_FILES['pic']['tmp_name'], $full_path)) {
+            $message = ['type' => 'danger', 'text' => 'Upload ảnh thất bại!'];
+        }
     }
 
-    // Thêm quảng cáo
+    // thêm 
     if (isset($_POST['action']) && $_POST['action'] == 'add') {
         $name = $_POST['name'] ?? '';
         $description = $_POST['description'] ?? '';
@@ -25,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Sửa quảng cáo
+    // sửa 
     if (isset($_POST['action']) && $_POST['action'] == 'edit') {
         $id = isset($_GET['edit-id']) ? $_GET['edit-id'] : '';
         $name = isset($_POST['name']) ? $_POST['name'] : '';
@@ -36,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $updates = [];
             $updates[] = "TenQC = '$name'";
             $updates[] = "MoTa = '$description'";
-            if ($image_path != '/uploads/') {
+            if ($image_path != '/Salonoto/assets/img/sliders/') {
                 $updates[] = "AnhQC = '$image_path'";
             }
             $updates[] = "TinhTrang = $status";
@@ -57,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
-// Xóa quảng cáo
+// xóa
 if (isset($_GET['del-id'])) {
     $id = $_GET['del-id'] ?? '';
     $sql = "DELETE FROM quangcao WHERE MaQC = $id";
@@ -166,7 +176,7 @@ if (isset($_GET['del-id'])) {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Huỷ</button>
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='list.php'">Hủy</button>
                         <button name="action" value="edit" class="btn btn-success">Sửa</button>
                     </div>
                 </form>
@@ -279,4 +289,3 @@ function removeRow(id) {
     }
 }
 </script>
-<!-- test -->

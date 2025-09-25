@@ -1,8 +1,8 @@
 <?php
-// Thiết lập múi giờ Việt Nam
+// thiết lập múi giờ Việt Nam
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-include 'header.php'; // header đã include session_start() và database.php
+include 'header.php'; 
 
 if (!isset($_SESSION['TenTaiKhoan'])) {
     echo "<script>alert('Vui lòng đăng nhập để thanh toán!'); window.location='sign.php';</script>";
@@ -11,14 +11,13 @@ if (!isset($_SESSION['TenTaiKhoan'])) {
 
 $username = $_SESSION['TenTaiKhoan'];
 
-// Lấy MaDonDatHang từ GET
 $MaDonDatHang = isset($_GET['MaDonDatHang']) ? intval($_GET['MaDonDatHang']) : 0;
 if (!$MaDonDatHang) {
     echo "<script>alert('Không tìm thấy đơn hàng!'); window.location='index.php';</script>";
     exit;
 }
 
-// Lấy thông tin đơn hàng
+// lấy thông tin đơn hàng
 $orderInfo = Database::GetData("SELECT * FROM dondathang WHERE MaDonDatHang=$MaDonDatHang AND TenTaiKhoan='$username'");
 if (!$orderInfo || count($orderInfo) == 0) {
     echo "<script>alert('Đơn hàng không tồn tại!'); window.location='index.php';</script>";
@@ -26,20 +25,19 @@ if (!$orderInfo || count($orderInfo) == 0) {
 }
 $order = $orderInfo[0];
 
-// Kiểm tra xem đơn hàng đã bị hủy chưa
 if ($order['TrangThai'] == 'Huy') {
     echo "<script>alert('Đơn hàng này đã bị hủy do quá thời gian thanh toán!'); window.location='index.php';</script>";
     exit;
 }
 
-// Kiểm tra xem đã thanh toán chưa
+// kiểm tra xem đã thanh toán chưa
 $paymentCheck = Database::GetData("SELECT MaTT FROM thanhtoan WHERE MaDonDatHang=$MaDonDatHang");
 if ($paymentCheck && count($paymentCheck) > 0) {
     echo "<script>alert('Đơn hàng này đã được thanh toán!'); window.location='index.php';</script>";
     exit;
 }
 
-// Lấy thông tin user
+// lấy thông tin user
 $userInfo = Database::GetData("SELECT TenDayDu, SDT, DiaChi FROM Users WHERE TenTaiKhoan='$username'");
 if (!$userInfo || count($userInfo) == 0) {
     echo "<script>alert('Không tìm thấy thông tin người dùng!'); window.location='index.php';</script>";
@@ -47,7 +45,7 @@ if (!$userInfo || count($userInfo) == 0) {
 }
 $user = $userInfo[0];
 
-// Lấy chi tiết đơn hàng
+// lấy chi tiết đơn hàng
 $cartItems = Database::GetData("
     SELECT c.MaSP, c.SL, s.TenSP, IFNULL(s.GiaKhuyenMai, s.Gia) AS Gia
     FROM chitietdondathang c
@@ -60,24 +58,24 @@ if (!$cartItems || count($cartItems) == 0) {
     exit;
 }
 
-// Tính tổng tiền từ chi tiết
+// tính tổng tiền từ chi tiết
 $TongTien = 0;
 foreach($cartItems as $item){
     $TongTien += $item['Gia'] * $item['SL'];
 }
 
-// Lấy mã giảm giá và giá trị
+// lấy mã giảm giá và giá trị
 $MaGiamGia = $order['MaGiamGia'] ?? '';
 $GiamGia = floatval($order['GiamGia'] ?? 0);
 $TongTienSauGiam = max(0, $TongTien - $GiamGia);
 
-// Tính thời gian còn lại - FIX: Tính chính xác
+// tính thời gian còn lại 
 $createdTime = strtotime($order['CreatedAt']);
 $currentTime = time();
-$timeElapsed = $currentTime - $createdTime; // Thời gian đã trôi qua (giây)
-$remainingSeconds = max(0, (15 * 60) - $timeElapsed); // 15 phút = 900 giây
+$timeElapsed = $currentTime - $createdTime; 
+$remainingSeconds = max(0, (15 * 60) - $timeElapsed);
 
-// Nếu đã hết thời gian, tự động hủy đơn
+// hết thời gian, tự động hủy đơn
 if ($remainingSeconds <= 0) {
     $updateSql = "UPDATE dondathang 
                   SET TrangThai = 'Huy', 
@@ -88,26 +86,23 @@ if ($remainingSeconds <= 0) {
     exit;
 }
 
-// Xử lý form submit
+// form submit
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $GhiChu = isset($_POST['GhiChu']) ? addslashes(trim($_POST['GhiChu'])) : '';
     $PhuongThucTT = isset($_POST['PhuongThucTT']) ? $_POST['PhuongThucTT'] : 'COD';
 
-    // Cập nhật ghi chú đơn hàng nếu có
     if (!empty($GhiChu)) {
         Database::NonQuery("UPDATE dondathang SET GhiChu='$GhiChu' WHERE MaDonDatHang=$MaDonDatHang");
     }
     
-    // Tạo mã giao dịch
     $MaGiaoDich = "GD" . date('YmdHis') . rand(100, 999);
     
-    // Tạo bản ghi thanh toán
     $insertPaymentSql = "INSERT INTO thanhtoan 
         (MaDonDatHang, TenTaiKhoan, TongTien, PhuongThucTT, GhiChu, MaGiaoDich)
         VALUES ($MaDonDatHang, '$username', $TongTienSauGiam, '$PhuongThucTT', '$GhiChu', '$MaGiaoDich')";
     
     if (Database::NonQuery($insertPaymentSql)) {
-        echo "<script>alert('Đơn hàng của bạn đã được tạo và đang chờ xử lý!'); window.location='profile.php';</script>";
+        echo "<script>alert('Đơn hàng của bạn đã được tạo và đang chờ xử lý!'); window.location='index.php';</script>";
         exit;
     } else {
         $errorMsg = "Có lỗi khi xử lý thanh toán. Vui lòng thử lại!";
@@ -192,8 +187,8 @@ body { font-family: Arial, Helvetica, sans-serif; }
                         <label>Ghi chú (tuỳ chọn)</label>
                         <textarea name="GhiChu" form="paymentForm" class="form-control" rows="3" placeholder="Nhập yêu cầu đặc biệt nếu có"><?= htmlspecialchars($order['GhiChu'] ?? '') ?></textarea>
                     </div>
-                    <p><strong>Lưu ý khi thanh toán:</strong> Nếu bạn thanh toán bằng chuyển khoản ngân hàng hoặc Momo, hãy nhập đúng số tiền và nội dung chuyển khoản theo cú pháp:</p>
-                    <p><strong>Tên - SĐT - Ngày thanh toán</strong> (VD: Nguyen Van A - 0123456789 - <?= date('d/m') ?>)</p>
+                    <!-- <p><strong>Lưu ý khi thanh toán:</strong> Nếu bạn thanh toán bằng chuyển khoản ngân hàng hoặc Momo, hãy nhập đúng số tiền và nội dung chuyển khoản theo cú pháp:</p>
+                    <p><strong>Tên - SĐT - Mã đơn hàng</strong>: <?= htmlspecialchars($user['TenDayDu']) ?> - <?= htmlspecialchars($user['SDT']) ?> - <?= htmlspecialchars($order['MaDonDatHang'] ?? '') ?></p> -->
                 </div>
             </div>
 
@@ -243,7 +238,7 @@ body { font-family: Arial, Helvetica, sans-serif; }
                             <p><strong>Ngân hàng:</strong> Techcombank</p>
                             <p><strong>Số tài khoản:</strong> 0123456789</p>
                             <p><strong>Chủ tài khoản:</strong> NGUYEN VAN A</p>
-                            <p><strong>Nội dung:</strong> <?= $user['TenDayDu'] ?> - <?= $user['SDT'] ?> - <?= date('d/m') ?></p>
+                            <p><strong>Nội dung:</strong> <?= htmlspecialchars($user['TenDayDu']) ?> - <?= htmlspecialchars($user['SDT']) ?> - <?= htmlspecialchars($order['MaDonDatHang'] ?? '') ?></p>
                             <img src="assets/img/tech.jpg" alt="QR Bank" style="max-width:100%; height:auto; margin-top:10px;">
                         </div>
                         
@@ -257,7 +252,7 @@ body { font-family: Arial, Helvetica, sans-serif; }
                             <p><strong>Ví điện tử:</strong> Momo</p>
                             <p><strong>Số điện thoại:</strong> 0987654321</p>
                             <p><strong>Chủ tài khoản:</strong> NGUYEN VAN B</p>
-                            <p><strong>Nội dung:</strong> <?= $user['TenDayDu'] ?> - <?= $user['SDT'] ?> - <?= date('d/m') ?></p>
+                            <p><strong>Nội dung:</strong> <?= htmlspecialchars($user['TenDayDu']) ?> - <?= htmlspecialchars($user['SDT']) ?> - <?= htmlspecialchars($order['MaDonDatHang'] ?? '') ?></p>
                             <img src="assets/img/momo.jpg" alt="QR Momo" style="max-width:100%; height:auto; margin-top:10px;">
                         </div>
 
@@ -272,7 +267,7 @@ body { font-family: Arial, Helvetica, sans-serif; }
 </div>
 
 <script>
-// Đếm ngược thời gian - FIX: Tính chính xác
+// Đếm ngược thời gian 
 let remainingSeconds = <?= $remainingSeconds ?>;
 
 function updateCountdown() {

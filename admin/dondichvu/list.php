@@ -1,9 +1,7 @@
 <?php include '../header.php'?>
 
 <?php
-// =======================
 // Xử lý Xác nhận / Từ chối
-// =======================
 if (isset($_GET['action']) && isset($_GET['MaDatDichVu'])) {
     $MaDatDichVu = intval($_GET['MaDatDichVu']);
     $action = $_GET['action'];
@@ -15,36 +13,31 @@ if (isset($_GET['action']) && isset($_GET['MaDatDichVu'])) {
     }
 }
 
-// =======================
 // Xử lý Hoàn thành và tạo hóa đơn
-// =======================
 if (isset($_GET['complete']) && isset($_GET['MaDatDichVu'])) {
     $MaDatDichVu = intval($_GET['MaDatDichVu']);
     $conn = Database::BeginTransaction();
 
     try {
-        // 1. Cập nhật trạng thái đơn dịch vụ
         Database::NonQueryTrans($conn, "UPDATE datdichvu SET TrangThai='DaHoanThanh' WHERE MaDatDichVu=$MaDatDichVu");
 
-        // 2. Lấy thông tin TenTaiKhoan từ datdichvu
         $order = Database::GetData("SELECT TenTaiKhoan FROM datdichvu WHERE MaDatDichVu=$MaDatDichVu", ['row'=>0]);
         if (!$order) throw new Exception("Không tìm thấy tài khoản cho đơn dịch vụ $MaDatDichVu");
         $TenTaiKhoan = $order['TenTaiKhoan'];
 
-        // 3. Lấy chi tiết dịch vụ và tính tổng tiền
         $services = Database::GetData("SELECT MaDichVu, Gia FROM datdichvu_chitiet WHERE MaDatDichVu=$MaDatDichVu");
         $tongTien = 0;
         if ($services) {
             foreach ($services as $s) $tongTien += $s['Gia'];
         }
 
-        // 4. Tạo hóa đơn dịch vụ và lưu TenTaiKhoan
+
         $MaHoaDon = Database::NonQueryIdTrans($conn, "
             INSERT INTO hoadondichvu (MaDatDichVu, TenTaiKhoan, TongTien)
             VALUES ($MaDatDichVu, '$TenTaiKhoan', $tongTien)
         ");
 
-        // 5. Tạo chi tiết hóa đơn
+        //Tạo chi tiết hóa đơn
         if ($services) {
             foreach ($services as $s) {
                 $dv = Database::GetData("SELECT TenDichVu FROM dichvu WHERE MaDichVu={$s['MaDichVu']}", ['row'=>0]);
@@ -57,7 +50,6 @@ if (isset($_GET['complete']) && isset($_GET['MaDatDichVu'])) {
             }
         }
 
-        // Commit transaction
         Database::Commit($conn);
     } catch (Exception $e) {
         Database::Rollback($conn);
@@ -65,9 +57,7 @@ if (isset($_GET['complete']) && isset($_GET['MaDatDichVu'])) {
     }
 }
 
-// =======================
-// Hàm hiển thị badge trạng thái
-// =======================
+
 function ServiceOrderStatusBadge($status) {
     switch($status){
         case 'ChoXuLy': return '<span class="badge bg-warning">Chờ xử lý</span>';
@@ -101,7 +91,7 @@ function ServiceOrderStatusBadge($status) {
         <?php include '../alert.php'?>
 
         <div class="container-fluid">
-            <!-- Tìm kiếm -->
+
             <div class="row my-2 d-flex-end">
                 <form method="GET">
                     <div class="input-group">
@@ -216,7 +206,6 @@ function ServiceOrderStatusBadge($status) {
                 </div>
             </div>
 
-            <!-- Phân trang -->
             <div class="row my-2 d-flex-between">
                 <div>Hiển thị từ <?=$pager['StartPage']?> đến <?=$pager['EndPage']?> của <?=$pager['TotalItems']?> bản ghi</div>
                 <ul class="pagination">

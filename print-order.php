@@ -5,13 +5,12 @@ include 'config/Helper.php';
 
 session_start();
 
-// Kiểm tra khách đã đăng nhập chưa
+// Kiểm tra 
 if (!isset($_SESSION['TenTaiKhoan'])) {
     header("Location: login.php");
     exit;
 }
 
-// Lấy order-id từ URL
 $orderID = $_GET['order-id'] ?? '';
 
 // Lấy hóa đơn dựa trên MaDonDatHang và user hiện tại
@@ -30,7 +29,6 @@ if (!$invoice) {
     die('<div class="alert alert-danger text-center">Hóa đơn không tồn tại hoặc không phải của bạn.</div>');
 }
 
-// Lấy chi tiết hóa đơn, lấy giá thực tế từ cột Gia trong chitiethoadon
 $MaHoaDon = $invoice['MaHoaDon'];
 $sqlItems = "SELECT MaSP, TenSP, SL, Gia, NgayBatDauBH, NgayKetThucBH
              FROM chitiethoadon
@@ -128,4 +126,3 @@ $items = Database::GetData($sqlItems);
 </div>
 </body>
 </html>
-<!-- 123 -->/

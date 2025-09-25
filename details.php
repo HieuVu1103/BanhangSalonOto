@@ -22,6 +22,7 @@ $relatedSql = "SELECT sp.*
                LIMIT 8";
 $relatedProducts = Database::GetData($relatedSql);
 ?>
+
 <div class="single-product-area">
     <div class="zigzag-bottom"></div>
     <div class="container">
@@ -56,7 +57,7 @@ $relatedProducts = Database::GetData($relatedSql);
                 </p>
                 <p><b>Loại sản phẩm: </b>
                     <?php if(isset($sanPham['TenLoaiSP'])): ?>
-                        <a href="<?='/Salonoto/category-product.php?MaLoaiSP=' . $sanPham['MaLoaiSP']?>"><?=$sanPham['TenLoaiSP']?></a>
+                        <a href="<?='/Salonoto/category.php?MaLoaiSP=' . $sanPham['MaLoaiSP']?>"><?=$sanPham['TenLoaiSP']?></a>
                     <?php else: ?>Chưa phân loại<?php endif; ?>
                 </p>
                 <p><b>Số lượng: </b>

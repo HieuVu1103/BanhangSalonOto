@@ -50,7 +50,6 @@
                 <li>✔️ <strong>Cơ sở vật chất hiện đại, quy trình chuyên nghiệp</strong></li>
              </ul>
 
-            <!-- Ảnh 1 + chú thích -->
             <figure style="text-align: center;">
                 <img src="/Salonoto/assets/img/salon.jpg" alt="Salon" 
                      style="width: 100%; border-radius: 10px;">
@@ -117,4 +116,3 @@
 </div>
 
 <?php include 'footer.php'; ?>
-<!-- test -->

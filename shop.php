@@ -4,13 +4,13 @@
     <div class="container">
 
         <?php
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Trang hiện tại
-        $limit = 8; // Số sản phẩm mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 8;
         $offset = ($page - 1) * $limit;
 
         $keyword = isset($_GET['keyword']) ? "WHERE sp.TenSP LIKE '%" . $_GET['keyword'] . "%'" : '';
 
-        // Lấy sản phẩm (theo CSĐL mới, SL trong sanpham)
+        // lấy sản phẩm 
         $sql = "SELECT sp.*, sp.SL AS SLTon
                 FROM sanpham sp
                 $keyword
@@ -18,7 +18,7 @@
                 LIMIT $limit OFFSET $offset";
         $SanPham = Database::GetData($sql);
 
-        // Tổng sản phẩm để tính tổng số trang
+        //tính tổng số trang
         $countSql = "SELECT COUNT(*) as total FROM sanpham sp $keyword";
         $totalResult = Database::GetData($countSql, ['row' => 0]);
         $totalProducts = $totalResult['total'];
@@ -82,9 +82,18 @@ function addToCart(maSP, slTon) {
         alert("Sản phẩm này đã hết hàng!");
         return false;
     } else {
-        alert("Thêm vào giỏ hàng thành công!");
-        window.location.href = "/Salonoto/cart.php?id=" + maSP;
-        return false;
+        // Gọi ajax để thêm vào giỏ hàng mà không rời trang
+        fetch("/Salonoto/cart.php?id=" + maSP)
+            .then(response => response.text())
+            .then(data => {
+                alert("Thêm vào giỏ hàng thành công!");
+            })
+            .catch(error => {
+                alert("Có lỗi khi thêm vào giỏ hàng!");
+                console.error(error);
+            });
+
+        return false; // vẫn ở lại trang
     }
 }
 </script>

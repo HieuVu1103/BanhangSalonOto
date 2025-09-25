@@ -86,7 +86,6 @@
           ?>
           
           <div class="row">
-            <!-- Bảng trái: Đơn hàng -->
             <div class="col-md-6">
               <div class="card border-primary">
                 <div class="card-header bg-primary text-white">Tình hình đơn hàng</div>
@@ -99,7 +98,6 @@
               </div>
             </div>
 
-            <!-- Bảng phải: Doanh thu -->
             <div class="col-md-6">
               <div class="card border-success">
                 <div class="card-header bg-success text-white">Tình hình doanh thu</div>
@@ -112,7 +110,6 @@
             </div>
           </div>
 
-          <!-- Biểu đồ doanh thu -->
           <h5 class="mt-4">Biểu đồ cột doanh thu theo tháng</h5>
           <canvas id="chartSales" height="100"></canvas>
         </div>
@@ -120,7 +117,6 @@
         <!-- Dịch vụ -->
         <div class="tab-pane fade" id="service" role="tabpanel">
           <?php
-          // Sửa lại query cho phù hợp với cấu trúc CSDL
           $services = Database::GetData("
             SELECT dv.TenDichVu, COUNT(ddv.MaDatDichVu) AS SoLuong
             FROM datdichvu ddv
@@ -175,7 +171,6 @@
         <!-- Nhập hàng -->
         <div class="tab-pane fade" id="import" role="tabpanel">
           <?php
-          // Sửa lại query dựa trên cấu trúc bảng phieunhap và chitietphieunhap
           $imports = Database::GetData("
             SELECT sp.TenSP, SUM(ctn.SL) AS TongSL, SUM(ctn.SL * ctn.GiaNhap) AS TongTien
             FROM chitietphieunhap ctn
@@ -202,7 +197,6 @@
         <!-- Tồn kho -->
         <div class="tab-pane fade" id="stock" role="tabpanel">
           <?php
-          // Sửa lại query tồn kho - dựa trên bảng sanpham (có cột SL là số lượng tồn)
           $stocks = Database::GetData("
             SELECT sp.MaSP, sp.TenSP, sp.SL AS SLTon, 
                    GROUP_CONCAT(DISTINCT nc.TenNCC SEPARATOR ', ') AS NhaCungCap
@@ -257,7 +251,7 @@ if (salesLabels.length > 0) {
   });
 }
 
-// Biểu đồ dịch vụ123
+
 const serviceData = [<?php foreach($services as $s) echo $s['SoLuong'].","; ?>];
 const serviceLabels = [<?php foreach($services as $s) echo "'".$s['TenDichVu']."',"; ?>];
 
@@ -272,7 +266,7 @@ if (serviceLabels.length > 0) {
   });
 }
 
-// Biểu đồ sản phẩm bán chạy
+
 const productData = [<?php foreach($products as $p) echo $p['TongBan'].","; ?>];
 const productLabels = [<?php foreach($products as $p) echo "'".$p['TenSP']."',"; ?>];
 
@@ -287,7 +281,7 @@ if (productLabels.length > 0) {
   });
 }
 
-// Biểu đồ nhập hàng
+
 const importQtyData = [<?php foreach($imports as $i) echo $i['TongSL'].","; ?>];
 const importAmountData = [<?php foreach($imports as $i) echo $i['TongTien'].","; ?>];
 const importLabels = [<?php foreach($imports as $i) echo "'".$i['TenSP']."',"; ?>];
@@ -306,7 +300,7 @@ if (importLabels.length > 0) {
   });
 }
 
-// Biểu đồ tồn kho
+
 const stockData = [<?php foreach($stocks as $st) echo $st['SLTon'].","; ?>];
 const stockLabels = [<?php foreach($stocks as $st) echo "'".$st['TenSP']."',"; ?>];
 
@@ -321,7 +315,6 @@ if (stockLabels.length > 0) {
   });
 }
 </script>
-<!-- Thêm sau các script Chart.js -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 

@@ -1,7 +1,6 @@
 <?php include '../header.php'?>
 
 <?php
-// AJAX: Xem chi tiết phiếu nhập
 if (isset($_POST['action']) && $_POST['action'] == 'get_detail') {
     $id = $_POST['id'];
     
@@ -101,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if ($hasValidProduct) {
-                // Bắt đầu transaction
                 $connect = Database::BeginTransaction();
                 try {
                     // 1. Insert phiếu nhập
@@ -140,7 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         }
                     }
 
-                    // Commit transaction
                     Database::Commit($connect);
                     $message = ['type' => 'success', 'text' => 'Thêm phiếu nhập thành công'];
                 } catch (Exception $e) {
@@ -156,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Xóa phiếu nhập (và tất cả chi tiết)
+// Xóa phiếu nhập 
 if (isset($_GET['del-id'])) {
     $MaNhap = $_GET['del-id'];
     try {
@@ -169,9 +166,7 @@ if (isset($_GET['del-id'])) {
             Database::NonQueryTrans($connect, $sqlRestore);
         }
         
-        // Xóa chi tiết trước
         Database::NonQueryTrans($connect, "DELETE FROM chitietphieunhap WHERE MaNhap=$MaNhap");
-        // Xóa phiếu nhập
         Database::NonQueryTrans($connect, "DELETE FROM phieunhap WHERE MaNhap=$MaNhap");
         
         Database::Commit($connect);
@@ -204,11 +199,10 @@ if (isset($_GET['del-id'])) {
         </div>
     </div>
 
-    <!-- Main content -->
     <section class="content">
         <?php include '../alert.php'?>
 
-        <!-- Modal: Add -->
+        <!-- Modal: thêm -->
         <div class="modal fade" id="modal-add" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
                 <form class="modal-content" method="POST">
@@ -296,7 +290,7 @@ if (isset($_GET['del-id'])) {
             </div>
         </div>
 
-        <!-- Modal: View Detail -->
+        <!-- Modal: chi tiết -->
         <div class="modal fade" id="modal-detail" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
                 <div class="modal-content">
@@ -412,7 +406,6 @@ if (isset($_GET['del-id'])) {
             </div>
         </div>
     </section>
-    <!-- /.content -->
 </div>
 <?php include '../footer.php'?>
 

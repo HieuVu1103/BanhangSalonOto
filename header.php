@@ -141,7 +141,7 @@
             box-sizing: border-box;
             color: #333;
             text-decoration: none;
-            text-align: left;       /* Căn trái chữ */
+            text-align: left;
             transition: background 0.25s ease, color 0.25s ease;
             white-space: nowrap;
         }
@@ -206,7 +206,7 @@
         <div class="container">
             <div class="user-menu">
                 <ul>
-                    <?php if (isset($_SESSION['MaQuyen']) && $_SESSION['MaQuyen'] == '1') {?>
+                    <?php if (isset($_SESSION['MaQuyen']) && ($_SESSION['MaQuyen'] == '1' || $_SESSION['MaQuyen'] == '2')) {?>
                     <li><a href="/Salonoto/admin/dashboard/index.php"><i class="fas fa-user-shield"></i> Trang quản trị</a></li>
                     <?php }if (isset($_SESSION['MaQuyen'])) {?>
                     <li><a href="/Salonoto/profile.php"><i class="fas fa-user"></i> <?=$_SESSION['TenDayDu']?></a></li>
@@ -218,7 +218,7 @@
                 </ul>
             </div>
         </div>
-    </div> <!-- End header area -->
+    </div> 
 
     <div class="site-branding-area">
         <div class="container">
@@ -241,14 +241,14 @@
                 if (isset($_SESSION['TenTaiKhoan'])) {
                     $username = $_SESSION['TenTaiKhoan'];
 
-                    // Tổng tiền = SUM(SL * Giá)
+                    // tổng tiền = SUM(SL * Giá)
                     $sql = "SELECT SUM(GioHang.SL * IFNULL(SanPham.GiaKhuyenMai, SanPham.Gia)) AS TongTien
                             FROM GioHang
                             INNER JOIN SanPham ON GioHang.MaSP = SanPham.MaSP
                             WHERE GioHang.TenTaiKhoan = '$username'";
                     $totalMoney = (int) Database::GetData($sql, ['cell' => 'TongTien']);
 
-                    // Đếm số sản phẩm trong giỏ
+                    // đếm số sản phẩm trong giỏ
                     $sql = "SELECT COUNT(*) AS SoLuong
                             FROM GioHang 
                             WHERE TenTaiKhoan = '$username'";
@@ -265,7 +265,7 @@
                 </div>
             </div>
         </div>
-    </div> <!-- End site branding area -->
+    </div> 
 
     <div class="mainmenu-area">
         <div class="container">

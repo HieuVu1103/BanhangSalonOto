@@ -1,7 +1,7 @@
 <?php include '../header.php'?>
 
 <?php
-// Xử lý thêm thanh toán thủ công
+// tt thủ công
 if (isset($_POST['action']) && $_POST['action'] == 'add') {
     $MaDonDatHang = !empty($_POST['MaDonDatHang']) ? (int)$_POST['MaDonDatHang'] : null;
     $TenTaiKhoan  = $_POST['TenTaiKhoan'] ?? '';
@@ -10,7 +10,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
     $GhiChu       = $_POST['GhiChu'] ?? '';
 
     if ($TenTaiKhoan && $TongTien > 0 && $PhuongThucTT) {
-        // Nếu có chọn đơn hàng thì mới kiểm tra
+        // chọn mới kiểm tra
         if ($MaDonDatHang) {
             $donHang = Database::GetData("SELECT * FROM dondathang WHERE MaDonDatHang = '$MaDonDatHang'", ['row' => 0]);
             if (!$donHang) {
@@ -19,13 +19,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
             }
         }
 
-        // Kiểm tra user có tồn tại không
+        // check tồn tại user
         $user = Database::GetData("SELECT * FROM users WHERE TenTaiKhoan = '$TenTaiKhoan'", ['row' => 0]);
         if ($user) {
-            // Tạo mã giao dịch unique
+            // tạo mã gd
             $MaGiaoDich = 'GD' . rand(1000000, 9999999);
 
-            // Insert thanh toán (nếu null thì để NULL, ngược lại để giá trị)
+            // insert thanh toán 
             $MaDonDatHangSQL = $MaDonDatHang ? "'$MaDonDatHang'" : "NULL";
 
             $sql = "INSERT INTO thanhtoan (MaDonDatHang, MaGiaoDich, TenTaiKhoan, TongTien, PhuongThucTT, TrangThaiTT, GhiChu, NgayTT) 
@@ -44,22 +44,22 @@ if (isset($_POST['action']) && $_POST['action'] == 'add') {
     }
 }
 
-// Xử lý xác nhận hoặc hủy thanh toán
+// xử lý xác nhận hoặc hủy 
 if (isset($_GET['action']) && isset($_GET['MaGiaoDich'])) {
     $MaGiaoDich = $_GET['MaGiaoDich'];
     $action = $_GET['action'];
 
-    // Lấy MaDonDatHang từ thanhtoan
+    // lấy MaDonDatHang từ thanhtoan
     $payment = Database::GetData("SELECT MaDonDatHang FROM thanhtoan WHERE MaGiaoDich='$MaGiaoDich'", ['row'=>0]);
     if ($payment) {
         $MaDonDatHang = $payment['MaDonDatHang'];
 
         if ($action == 'confirm') {
-            // Thanh toán hoàn tất
+            // thanh toán hoàn tất
             Database::NonQuery("UPDATE thanhtoan SET TrangThaiTT='HoanTat', UpdatedAt=NOW() WHERE MaGiaoDich='$MaGiaoDich'");
             Database::NonQuery("UPDATE dondathang SET TrangThai='XacNhan' WHERE MaDonDatHang='$MaDonDatHang'");
 
-            // Trừ số lượng trong SanPham
+            // trừ số lượng trong SanPham
             $chiTiet = Database::GetData("SELECT MaSP, SL FROM chitietdondathang WHERE MaDonDatHang='$MaDonDatHang'");
             if ($chiTiet) {
                 foreach ($chiTiet as $item) {
@@ -70,14 +70,14 @@ if (isset($_GET['action']) && isset($_GET['MaGiaoDich'])) {
             }
         }
         elseif ($action == 'cancel') {
-            // Thanh toán hủy
+            // thanh toán hủy
             Database::NonQuery("UPDATE thanhtoan SET TrangThaiTT='Huy', UpdatedAt=NOW() WHERE MaGiaoDich='$MaGiaoDich'");
             Database::NonQuery("UPDATE dondathang SET TrangThai='Huy' WHERE MaDonDatHang='$MaDonDatHang'");
         }
     }
 }
 
-// Hàm hiển thị badge trạng thái thanh toán
+//  badge trạng thái thanh toán
 function PaymentBadgeTT($status) {
     switch($status){
         case 'ChoXuLy':
@@ -91,7 +91,7 @@ function PaymentBadgeTT($status) {
     }
 }
 
-// Lấy danh sách đơn đặt hàng và users cho form thêm
+// lấy danh sách đơn đặt hàng và users cho form thêm
 $donDatHangList = Database::GetData("SELECT MaDonDatHang, TongTien FROM dondathang WHERE TrangThai IN ('ChoXuLy', 'XacNhan') ORDER BY MaDonDatHang DESC");
 $usersList = Database::GetData("SELECT TenTaiKhoan, TenDayDu FROM users ORDER BY TenDayDu");
 ?>
@@ -118,7 +118,7 @@ $usersList = Database::GetData("SELECT TenTaiKhoan, TenDayDu FROM users ORDER BY
     <section class="content">
         <?php include '../alert.php'?>
 
-        <!-- Modal: Add Payment -->
+        <!-- Modal: thêm tt -->
         <div class="modal fade" id="modal-add" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <form class="modal-content" method="POST">
@@ -277,7 +277,6 @@ $usersList = Database::GetData("SELECT TenTaiKhoan, TenDayDu FROM users ORDER BY
                 </div>
             </div>
 
-            <!-- Phân trang -->
             <div class="row my-2 d-flex-between">
                 <div>Hiển thị từ <?=$pager['StartPage']?> đến <?=$pager['EndPage']?> của <?=$pager['TotalItems']?> bản ghi</div>
                 <ul class="pagination">

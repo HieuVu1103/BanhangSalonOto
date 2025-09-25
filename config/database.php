@@ -98,9 +98,7 @@ class Database
         }
     }
 
-    // ========================
     // SELECT thông thường
-    // ========================
     public static function GetData($query, $format = [])
     {
         if (is_array($format)) {
@@ -136,9 +134,7 @@ class Database
         return [];
     }
 
-    // ========================
     // SELECT có phân trang
-    // ========================
     public static function GetDataWithPagination($query, $offset = 10, $page = 1)
     {
         $countAll = self::GetData('SELECT count(*) FROM categories', ['cell' => 0]);
@@ -154,10 +150,7 @@ class Database
             'page_number' => ceil($countAll / $offset),
         ];
     }
-
-    // ========================
     // INSERT, UPDATE, DELETE
-    // ========================
     public static function NonQuery($query)
     {
         $connect = self::Connect();
@@ -166,9 +159,8 @@ class Database
         return $result === true;
     }
 
-    // ========================
+
     // INSERT và trả về ID vừa tạo
-    // ========================
     public static function NonQueryId($query)
     {
         $connect = self::Connect();
@@ -182,9 +174,8 @@ class Database
         }
     }
 
-    // ========================
+
     // Transaction
-    // ========================
     public static function BeginTransaction()
     {
         $connect = self::Connect();
@@ -210,9 +201,9 @@ class Database
         }
     }
 
-    // ========================
+
     // NonQuery trong transaction
-    // ========================
+
     public static function NonQueryTrans($connect, $query)
     {
         if (!$connect->query($query)) {
@@ -221,9 +212,9 @@ class Database
         return true;
     }
 
-    // ========================
+
     // NonQueryId trong transaction
-    // ========================
+
     public static function NonQueryIdTrans($connect, $query)
     {
         if ($connect->query($query)) {
@@ -233,9 +224,9 @@ class Database
         }
     }
 
-    // ========================
+
     // Method để chạy cron thủ công nếu cần
-    // ========================
+
     public static function runCronManually()
     {
         $connect = self::Connect();
@@ -244,9 +235,8 @@ class Database
         return "Cron job đã chạy thủ công!";
     }
 
-    // ========================
+
     // Method để kiểm tra trạng thái cron
-    // ========================
     public static function getCronStatus()
     {
         return [

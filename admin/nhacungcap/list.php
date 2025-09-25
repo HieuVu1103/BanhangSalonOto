@@ -1,16 +1,16 @@
 <?php include '../header.php'?>
 
 <?php
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Thêm nhà cung cấp
-    if (isset($_POST['action']) && $_POST['action'] == 'add') {
+// Thêm nhà cung cấp
+if (isset($_POST['action']) && $_POST['action'] == 'add') {
         $name = $_POST['name'] ?? '';
         $phone = $_POST['phone'] ?? '';
-        $address = $_POST['address'] ?? '';
+        $address = $_POST['address'] ?? ''; // thêm dòng này
         $fax = $_POST['fax'] ?? '';
 
         if (!empty($name) && !empty($phone)) {
-            $sql = "INSERT INTO NhaCungCap (TenNCC, SDT, Fax) VALUES ('$name', '$phone', '$fax')";
+            $sql = "INSERT INTO NhaCungCap (TenNCC, SDT, DiaChi, Fax) 
+                    VALUES ('$name', '$phone', '$address', '$fax')";
 
             if (Database::NonQuery($sql)) {
                 $message = [
@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+
     // Sửa nhà cung cấp
     if (isset($_POST['action']) && $_POST['action'] == 'edit') {
         $id = $_GET['edit-id'] ?? '';
@@ -42,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'type' => 'success',
                     'text' => 'Cập nhật thành công',
                 ];
+                header("Location: list.php");
+                    exit;
             }
         } else {
             $message = [
@@ -51,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (empty($phone)) $message['text'][] = 'Số điện thoại không được trống';
         }
     }
-}
+
 
 // Xoá nhà cung cấp
 if (isset($_GET['del-id'])) {
@@ -167,7 +170,7 @@ if (isset($_GET['del-id'])) {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Huỷ</button>
+                        <button type="button" class="btn btn-danger" onclick="window.location.href='list.php'">Hủy</button>
                         <button name="action" value="edit" class="btn btn-success">Sửa</button>
                     </div>
                 </form>

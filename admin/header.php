@@ -4,13 +4,12 @@
 <?php include '../../config/Helper.php'?>
 
 <?php
-    // Kiểm tra xem có phải tài khoản quản trị viên không?
-    session_start();
-    if (!isset($_SESSION['MaQuyen']) || $_SESSION['MaQuyen'] != 1) {
-        header('Location: /index.php');
-    }
+session_start();
+if (!isset($_SESSION['MaQuyen']) || ($_SESSION['MaQuyen'] != 1 && $_SESSION['MaQuyen'] != 2)) {
+    header('Location: /index.php');
+    exit;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
