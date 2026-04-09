@@ -56,6 +56,11 @@
                         <?php } ?>
                         <a class="add_to_cart_button" href="<?='/Salonoto/details.php?id=' . $sp['MaSP']?>">Chi tiết</a>
                     </div>
+                    <?php
+                        if(isset($sp['SLTon'])){
+                            echo $sp['SLTon'] > 0 ? '<strong>'.$sp['SL'].'</strong>' : '<span style="color:red;font-weight:bold;">Liên hệ</span>';
+                        } else { echo 'Chưa có thông tin'; }
+                    ?>
                 </div>
             </div>
             <?php endforeach; ?>

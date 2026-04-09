@@ -3,9 +3,7 @@
         <img src="/Salonoto/assets/img/logo1.png" alt="Salon" style="width: 100%">
     </a>
 
-    <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 <?php $avatar = empty($_SESSION['Avatar']) ? '/assets/img/user.png' : $_SESSION['Avatar'];?>
@@ -16,7 +14,6 @@
             </div>
         </div>
 
-        <!-- SidebarSearch Form -->
         <div class="form-inline">
             <div class="input-group" data-widget="sidebar-search">
                 <input class="form-control form-control-sidebar" type="search" placeholder="Tìm kiếm" aria-label="Search">
@@ -28,7 +25,6 @@
             </div>
         </div>
 
-        <!-- Sidebar Menu -->
         <nav class="mt-2" style="height: calc(100% - 74px)">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
@@ -129,8 +125,5 @@
                 </li>
             </ul>
         </nav>
-        <!-- /.sidebar-menu -->
     </div>
-    <!-- /.sidebar -->
 </aside>
-<!-- testt -->

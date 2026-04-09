@@ -2,7 +2,7 @@
 
 <?php
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Edit items
+        // sửa
         if (isset($_POST['action']) && $_POST['action'] == 'edit') {
             $id = isset($_GET['edit-id']) ? $_GET['edit-id'] : '';
             $status = isset($_POST['status']) ? $_POST['status'] : '';
@@ -27,7 +27,7 @@
         }
     }
 
-    // Delete items
+    // xóa
     if (isset($_GET['del-id'])) {
         $id = isset($_GET['del-id']) ? $_GET['del-id'] : '';
         $sql = "DELETE FROM users WHERE TenTaiKhoan = '$id'";
@@ -62,11 +62,10 @@
         </div>
     </div>
 
-    <!-- Main content -->
     <section class="content">
         <?php include '../alert.php'?>
 
-        <!-- Modal: Edit -->
+        <!-- Modal: sửa -->
         <?php
             $id = isset($_GET['edit-id']) ? $_GET['edit-id'] : '';
             $user = [];
@@ -226,7 +225,6 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
 </div>
 <?php include '../footer.php'?>
 

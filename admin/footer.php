@@ -1,5 +1,4 @@
 </div>
-<!-- ./wrapper -->
 
 <!-- jQuery -->
 <script src="/Salonoto/vendor/Admin-LTE/plugins/jquery/jquery.min.js"></script>

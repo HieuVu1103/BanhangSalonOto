@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ob_end_flush(); // gửi output ra
 ?>
 
-<!-- HTML hiển thị -->
+
 <div class="product-big-title-area">
     <div class="container">
         <div class="row">
@@ -126,7 +126,7 @@ ob_end_flush(); // gửi output ra
                 <?php if ($errorMsg != ""): ?>
                     <div class="alert alert-danger"><?= $errorMsg ?></div>
                 <?php endif; ?>
-                
+
                 <div class="alert alert-warning mb-4">
                     <strong><i class="fa fa-clock-o"></i> Lưu ý quan trọng:</strong> 
                     Đơn hàng sẽ tự động bị hủy nếu bạn không thanh toán trong vòng <strong>15 phút</strong> kể từ khi tạo đơn.

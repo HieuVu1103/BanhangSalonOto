@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $image_path = null;
         }
     } else {
-        $image_path = null; // hoặc giữ nguyên ảnh cũ khi edit
+        $image_path = null; 
     }
 
-    // ===== THÊM SẢN PHẨM =====
+    // thêm sp
     if ($action == 'add') {
         $name = $_POST['name'] ?? '';
         $description = $_POST['description'] ?? '';
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // ===== SỬA SẢN PHẨM =====
+    // sửa sp
     if ($action == 'edit') {
         $id = $_GET['edit-id'] ?? '';
         $name = $_POST['name'] ?? '';
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
 
-    // ===== XÓA KHUYẾN MÃI =====
+    // xóa km
     if ($action == 'remove-promo') {
         $id = $_GET['edit-id'] ?? '';
         if ($id) {
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// ===== XÓA SẢN PHẨM =====
+// xóa sp
 if (isset($_GET['del-id'])) {
     $id = $_GET['del-id'] ?? '';
     if ($id) {
@@ -150,7 +150,7 @@ if (isset($_GET['del-id'])) {
     <section class="content">
         <?php include '../alert.php'?>
 
-    <!-- Modal: Add -->
+    <!-- Modal: thêm -->
     <div class="modal fade" id="modal-add" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 800px">
             <form class="modal-content" method="POST" enctype="multipart/form-data">
@@ -162,49 +162,41 @@ if (isset($_GET['del-id'])) {
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <!-- Tên sản phẩm -->
                         <div class="col-md-6 form-group">
                             <label>Tên sản phẩm</label>
                             <input type="text" name="name" class="form-control" required>
                         </div>
 
-                        <!-- Mô tả -->
                         <div class="col-md-6 form-group">
                             <label>Mô tả</label>
                             <textarea name="description" class="form-control" rows="3"></textarea>
                         </div>
 
-                        <!-- Nhà sản xuất -->
                         <div class="col-md-6 form-group">
                             <label>Nhà sản xuất</label>
                             <input type="text" name="manufacturer" class="form-control">
                         </div>
 
-                        <!-- Tính năng -->
                         <div class="col-md-6 form-group">
                             <label>Tính năng</label>
                             <textarea name="feature" class="form-control" rows="3"></textarea>
                         </div>
 
-                        <!-- Hình ảnh -->
                         <div class="col-md-6 form-group">
                             <label>Hình ảnh</label>
                             <input type="file" name="pic" class="form-control" required>
                         </div>
 
-                        <!-- Giá -->
                         <div class="col-md-6 form-group">
                             <label>Giá</label>
                             <input type="number" name="price" class="form-control" required>
                         </div>
 
-                        <!-- Giá khuyến mãi -->
                         <div class="col-md-6 form-group">
                             <label>Giá khuyến mãi</label>
                             <input type="number" name="promo_price" class="form-control" placeholder="Nếu có">
                         </div>
 
-                        <!-- Loại sản phẩm -->
                         <div class="col-md-6 form-group">
                             <label>Loại sản phẩm</label>
                             <select class="form-control" name="category">
@@ -220,7 +212,6 @@ if (isset($_GET['del-id'])) {
                             </select>
                         </div>
 
-                        <!-- Thời gian bảo hành -->
                         <div class="col-md-6 form-group">
                             <label>Thời gian bảo hành (năm)</label>
                             <input type="number" name="warranty" class="form-control" min="0" value="0">
@@ -236,7 +227,7 @@ if (isset($_GET['del-id'])) {
     </div>
 
 
-<!-- Modal: Edit -->
+<!-- Modal: sửa -->
 <?php
     $id = $_GET['edit-id'] ?? '';
     $product = [];
